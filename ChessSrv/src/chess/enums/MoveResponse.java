@@ -1,0 +1,10 @@
+package chess.enums;
+
+public enum MoveResponse {
+	GOOD,
+	MOVES_INTO_CHECK,
+	INVALID_PIECE_MOVE,
+	PIECE_BLOCKED,
+	MOVES_THROUGH_CHECK,
+	AMBIGUOUS
+}
