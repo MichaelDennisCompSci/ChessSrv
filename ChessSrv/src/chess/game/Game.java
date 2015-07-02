@@ -8,6 +8,7 @@ import java.util.Map;
 
 import chess.data.ChessBoard;
 import chess.data.Move;
+import chess.data.AsciiBoard;
 import chess.enums.Team;
 
 
@@ -42,6 +43,10 @@ public class Game implements Runnable{
 			List<String> strings= Move.printMoveList(moves);
 			
 			current.tell(strings);
+			
+			AsciiBoard ab = new AsciiBoard(cb);
+			p1.tell(ab.toBigString());
+			p2.tell(ab.toBigString());
 			
 			Map<String,Move> stringToMove= new HashMap<String,Move>();
 			
