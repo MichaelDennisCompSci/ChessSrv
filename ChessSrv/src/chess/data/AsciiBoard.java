@@ -1,4 +1,4 @@
-//let's play some fucking chess
+package chess.data;
 
 import java.util.HashMap;
 
@@ -107,6 +107,11 @@ public class AsciiBoard {
       {"WP","WP","WP","WP","WP","WP","WP","WP"},
       {"WR","WN","WB","WQ","WK","WB","WN","WR"}
     };
+  }
+
+  public AsciiBoard(ChessBoard cb) {
+    //unwritten
+    board = new AsciiBoard().board;
   }
 
   public void printSmall() {
