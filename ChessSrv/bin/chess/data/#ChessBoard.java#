@@ -1,0 +1,71 @@
+package chess.data;
+import static chess.enums.MoveResponse.*;
+import static chess.enums.Team.*;
+import static chess.enums.Unit.*;
+
+import java.util.List;
+
+import chess.enums.MoveResponse;
+import chess.enums.Team;
+import chess.enums.Unit;
+
+public class ChessBoard {
+	public static final Unit[][] u = new Unit[][]
+		 {{ROOK,KNIGHT,BISHOP,QUEEN,KING,BISHOP,KNIGHT,ROOK},
+		  {PAWN,PAWN  ,PAWN  ,PAWN ,PAWN,PAWN  ,PAWN  ,PAWN},
+		  {},
+		  {},
+		  {},
+		  {},
+		  {PAWN,PAWN  ,PAWN  ,PAWN ,PAWN,PAWN  ,PAWN  ,PAWN},
+		  {ROOK,KNIGHT,BISHOP,QUEEN,KING,BISHOP,KNIGHT,ROOK}};
+	 public static final Team[][] t=
+		 {{WHITE,WHITE,WHITE,WHITE,WHITE,WHITE,WHITE,WHITE},
+		  {WHITE,WHITE,WHITE,WHITE,WHITE,WHITE,WHITE,WHITE},
+		  {},
+		  {},
+		  {},
+		  {},
+		  {BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK},
+		  {BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK}};
+	private static final int BOARD_HIGHT = 8;
+	private static final int BOARD_WIDTH = 8;
+	
+	private Peice[][] board= new Peice[BOARD_HIGHT][BOARD_WIDTH];  //[rank][file]
+	private int lastPawnMoveFile;
+	private boolean whiteCanCastelLeft;
+	private boolean whiteCanCastelRight;
+	private boolean blackCanCastelLeft;
+	private boolean blackCanCastelRight;
+	
+	public ChessBoard(){
+		for(int rank =0; rank<u.length; rank++){
+			for(int file=0; file<u[rank].length; file++){
+				board[rank][file]=new Peice(u[rank][file],t[rank][file]);
+			}
+		}
+	}
+
+	public Team isCheck() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void move(Move move) {
+		// TODO Auto-generated method stub
+	}
+
+	public List<Move> getListOfMoves() {
+		// TODO Auto-generated method stub
+    List<int[]> allReachableSquares = getAllReachableSquares();
+    for (int[] square : allReachableSquares) {
+      if 
+    }
+		return null;
+	}
+
+	public boolean hasNextMove() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+}
