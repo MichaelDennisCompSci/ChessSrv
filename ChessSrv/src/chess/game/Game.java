@@ -8,6 +8,7 @@ import java.util.Map;
 
 import chess.data.ChessBoard;
 import chess.data.Move;
+import chess.data.AsciiBoard;
 import chess.enums.Team;
 
 
@@ -43,15 +44,20 @@ public class Game implements Runnable{
 			
 			current.tell(strings);
 			
+			AsciiBoard ab = new AsciiBoard(cb);
+			p1.tell(ab.toBigString());
+			p2.tell(ab.toBigString());
+			
 			Map<String,Move> stringToMove= new HashMap<String,Move>();
 			
 			for(int i=0; i<moves.size(); i++){
 				stringToMove.put(strings.get(i), moves.get(i));
 			}
 			
-			Move m;
+			String moveString;
 			int count=0;
 			do{
+        current.tell("Enter a valid move: ");
 				if(count>MAX_WRONG_MOVES){
 					current.tell("You lose, too many wrong moves.");
 					other.tell("Other Player made too many wrong moves.");
@@ -62,11 +68,10 @@ public class Game implements Runnable{
 					return;
 				}
 				count++;
-				m=current.getMove();
-			}while(stringToMove.containsKey(m));
-			
-			cb.move(stringToMove.get(m));
-			other.tell("The other player moved: "+m);
+				moveString=current.getMoveString();
+			}while(!stringToMove.containsKey(moveString));
+			cb.move(stringToMove.get(moveString));
+			other.tell("The other player moved: "+moveString);
 			
 			Player temp= current;
 			current=other;
