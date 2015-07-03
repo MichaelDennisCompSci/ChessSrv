@@ -55,12 +55,21 @@ public class Move {
 		break;
 		}
 		
-		s+=oldRank+'a';
-		s+=oldFile;
+		s+=rankString(oldRank)+'a';
+		s+=fileString(oldFile);
 		s=(takes)?"x":"";
-		s+=newRank+'a';
-		s+=newFile+'a';
+		s+=rankString(newRank)+'a';
+		s+=fileString(newFile)+'a';
 	}
+
+  public static String fileString(int file) {
+    String files = "abcdefgh";
+    return ""+files.charAt(file);
+  }
+
+  public static String rankString(int rank) {
+    return ""+(8-rank);
+  }
 	
 	public boolean isCastling(){
 		return isCastling;
@@ -149,8 +158,8 @@ public class Move {
 						sb.append("x");
 					}
 					
-					sb.append(move.newRank+'a');
-					sb.append(move.newFile);
+					sb.append(rankString(move.newRank)+'a');
+					sb.append(fileString(move.newFile));
 				}
 			}
 			

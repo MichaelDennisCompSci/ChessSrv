@@ -54,9 +54,10 @@ public class Game implements Runnable{
 				stringToMove.put(strings.get(i), moves.get(i));
 			}
 			
-			Move m;
+			String moveString;
 			int count=0;
 			do{
+        current.tell("Enter a valid move: ");
 				if(count>MAX_WRONG_MOVES){
 					current.tell("You lose, too many wrong moves.");
 					other.tell("Other Player made too many wrong moves.");
@@ -67,11 +68,10 @@ public class Game implements Runnable{
 					return;
 				}
 				count++;
-				m=current.getMove();
-			}while(stringToMove.containsKey(m));
-			
-			cb.move(stringToMove.get(m));
-			other.tell("The other player moved: "+m);
+				moveString=current.getMoveString();
+			}while(!stringToMove.containsKey(moveString));
+			cb.move(stringToMove.get(moveString));
+			other.tell("The other player moved: "+moveString);
 			
 			Player temp= current;
 			current=other;

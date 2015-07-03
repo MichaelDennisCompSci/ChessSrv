@@ -20,4 +20,30 @@ public class Peice {
 	public Team getTeam() {
 		return t;
 	}
+
+  public String toString() {
+    String s="";
+    switch(t) {
+    case WHITE: s="W";
+      break;
+    case BLACK: s="B";
+      break;
+    }
+
+    switch(u) {
+    case PAWN: s+="P";
+      break;
+    case KNIGHT: s+="N";
+      break;
+    case BISHOP: s+="B";
+      break;
+    case ROOK: s+="R";
+      break;
+    case QUEEN: s+="Q";
+      break;
+    case KING: s+="K";
+      break;
+    }
+    return s;
+  }
 }

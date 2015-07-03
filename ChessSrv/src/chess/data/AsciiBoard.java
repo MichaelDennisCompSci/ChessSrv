@@ -90,11 +90,6 @@ public class AsciiBoard {
                           "  (XXX)   ",
                           "  _|X|_   "});
   }};
-
-  public static void main(String args[]) {
-    AsciiBoard ab = new AsciiBoard();
-    ab.printBig();
-  }
   
   public AsciiBoard() {
     board = new String[][] {
@@ -110,8 +105,15 @@ public class AsciiBoard {
   }
 
   public AsciiBoard(ChessBoard cb) {
-    //unwritten
-    board = new AsciiBoard().board;
+    board = new String[8][8];
+    for (int i=0; i<8; i++) {
+      for (int j=0; j<8; j++) {
+        if (cb.getBoard()[7-i][7-j]!=null)
+          board[i][j]=cb.getBoard()[7-i][7-j].toString();
+        else
+          board[i][j]="";
+      }
+    }
   }
 
   public void printSmall() {
