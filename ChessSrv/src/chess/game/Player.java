@@ -29,8 +29,12 @@ public class Player {
 		tell("");
 	}
 
-	public Move getMove() {		
-		return new Move(sc.nextLine());
+	// public Move getMove() {		
+	// 	return new Move(sc.nextLine());
+	// }
+
+	public String getMoveString() {		
+		return sc.nextLine();
 	}
 
 }
