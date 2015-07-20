@@ -20,7 +20,8 @@ public class Move {
 		s=sIn;
 	}
 	
-	public Move(boolean isKingSideIn){
+	public Move(Peice pIn, boolean isKingSideIn){
+		p=pIn;
 		isCastling=true;
 		isKingSide=isKingSideIn;
 		s=(isKingSide)?"O-O":"O-O-O";
@@ -64,11 +65,11 @@ public class Move {
 
   public static String fileString(int file) {
     String files = "abcdefgh";
-    return ""+files.charAt(file);
+    return ""+files.charAt(7-file);
   }
 
   public static String rankString(int rank) {
-    return ""+(8-rank);
+    return ""+(rank+1);
   }
 	
 	public boolean isCastling(){
@@ -158,8 +159,10 @@ public class Move {
 						sb.append("x");
 					}
 					
-					sb.append(rankString(move.newRank)+'a');
+					//rank and file are being stored backwards...
 					sb.append(fileString(move.newFile));
+					sb.append(rankString(move.newRank));
+					
 				}
 			}
 			

@@ -1,25 +1,30 @@
 package chess.data;
-import static chess.enums.MoveResponse.*;
-import static chess.enums.Team.*;
-import static chess.enums.Unit.*;
+import static chess.enums.Team.BLACK;
+import static chess.enums.Team.WHITE;
+import static chess.enums.Unit.BISHOP;
+import static chess.enums.Unit.KING;
+import static chess.enums.Unit.KNIGHT;
+import static chess.enums.Unit.PAWN;
+import static chess.enums.Unit.QUEEN;
+import static chess.enums.Unit.ROOK;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-import chess.enums.MoveResponse;
 import chess.enums.Team;
 import chess.enums.Unit;
 
 public class ChessBoard {
 	public static final Unit[][] u = new Unit[][]
-    {{ROOK,KNIGHT,BISHOP,QUEEN,KING,BISHOP,KNIGHT,ROOK},
+    {{ROOK,KNIGHT,BISHOP,KING,QUEEN,BISHOP,KNIGHT,ROOK},
      {PAWN,PAWN  ,PAWN  ,PAWN ,PAWN,PAWN  ,PAWN  ,PAWN},
      {null,null  ,null  ,null ,null,null  ,null  ,null},
      {null,null  ,null  ,null ,null,null  ,null  ,null},
      {null,null  ,null  ,null ,null,null  ,null  ,null},
      {null,null  ,null  ,null ,null,null  ,null  ,null},
      {PAWN,PAWN  ,PAWN  ,PAWN ,PAWN,PAWN  ,PAWN  ,PAWN},
-     {ROOK,KNIGHT,BISHOP,QUEEN,KING,BISHOP,KNIGHT,ROOK}};
+     {ROOK,KNIGHT,BISHOP,KING,QUEEN,BISHOP,KNIGHT,ROOK}};
   public static final Team[][] t=
   {{WHITE,WHITE,WHITE,WHITE,WHITE,WHITE,WHITE,WHITE},
    {WHITE,WHITE,WHITE,WHITE,WHITE,WHITE,WHITE,WHITE},
@@ -48,6 +53,21 @@ public class ChessBoard {
           board[rank][file]=new Peice(u[rank][file],t[rank][file]);
 			}
 		}
+		lastPawnMoveFile=-1;
+		whiteCanCastelLeft=true;
+		whiteCanCastelRight=true;
+		blackCanCastelLeft=true;
+		blackCanCastelRight=true;
+	}
+	
+	public ChessBoard(ChessBoard cb){
+		this();
+		board=cb.copy();
+		lastPawnMoveFile=cb.lastPawnMoveFile;
+		whiteCanCastelLeft=cb.whiteCanCastelLeft;
+		whiteCanCastelRight=cb.whiteCanCastelRight;
+		blackCanCastelLeft=cb.blackCanCastelLeft;
+		blackCanCastelRight=cb.blackCanCastelRight;
 	}
 
   public Peice[][] getBoard() {
@@ -65,33 +85,208 @@ public class ChessBoard {
   }
 
 	public Team isCheck() {
-		// TODO Auto-generated method stub
-    List<Move> reachableMoves = getAllReachable();
-    for (Move m: reachableMoves) {
-      if (attacksKing(m))
-        return board[m.newRank()][m.newFile()].getTeam();
-    }
-    return null;
+		for (Move m: getAllReachable()) {
+			if (attacksKing(m)){
+				Team t= board[m.newRank()][m.newFile()].getTeam();
+				if(m.getPiece().getTeam()!=t){
+					return t;
+				}
+			}
+		}
+		return null;
 	}
 
 	public void move(Move move) {
-		// TODO Auto-generated method stub
+	if(move.isCastling()){
+		lastPawnMoveFile=-1;
+		int rank=0;
+		if(move.getPiece().getTeam()==WHITE){
+			whiteCanCastelLeft=false;
+			whiteCanCastelRight=false;
+			rank=0;
+		}else{
+			blackCanCastelLeft=false;
+			blackCanCastelRight=false;
+			rank=7;
+		}
+		
+		if(move.isKingSide()){
+			board[rank][2]=board[rank][0];
+			board[rank][1]=board[rank][3];
+			board[rank][3]=null;
+			board[rank][0]=null;
+			return;
+		}else{
+			board[rank][4]=board[rank][7];
+			board[rank][5]=board[rank][3];
+			board[rank][3]=null;
+			board[rank][7]=null;
+			return;
+		}
+	}
+	if(move.getPiece().getUnit()==KING){
+		if(move.getPiece().getTeam()==WHITE){
+			whiteCanCastelLeft=false;
+			whiteCanCastelRight=false;
+		}else{
+			blackCanCastelLeft=false;
+			blackCanCastelRight=false;
+		}
+	}
+	
+	if(move.getPiece().getUnit()==ROOK){
+		if(move.oldRank()==0){
+				if(move.oldFile()==0){
+					whiteCanCastelRight=false;
+				}else{
+					whiteCanCastelLeft=false;
+				}
+		}else if(move.oldRank()==7){
+			if(move.oldFile()==0){
+				blackCanCastelRight=false;
+			}else{
+				blackCanCastelLeft=false;
+			}
+		}
+	}
+	
+	if(move.getPiece().getUnit()!=PAWN){
+		lastPawnMoveFile=-1;
+	}else{
+		if(Math.abs(move.oldRank()-move.newRank())==2){
+			lastPawnMoveFile=move.newFile();
+		}
+		if(move.oldFile()!=move.newFile()&& board[move.newRank()][move.newFile()]==null){
+			if(move.getPiece().getTeam()==WHITE){
+				board[move.newRank()-1][move.newFile()]=null;
+			}else{
+				board[move.newRank()+1][move.newFile()]=null;
+			}
+		}
+	}
+	
     board[move.oldRank()][move.oldFile()]=null;
     board[move.newRank()][move.newFile()]=move.getPiece();
 	}
 
-	public List<Move> getListOfMoves() {
-		// TODO Auto-generated method stub
+	public List<Move> getListOfMoves(Team turn) {
+		System.out.println(whiteCanCastelLeft);
+		System.out.println(whiteCanCastelRight);
     List<Move> moves = new ArrayList<Move>();
-    List<Move> reachableMoves = getAllReachable();
-    for (Move m : reachableMoves) {
-      if (!attacksKing(m))
+    for (Move m : getAllReachable()) {
+      ChessBoard copy = new ChessBoard(this);
+      copy.move(m);
+      if (copy.isCheck()!=turn && m.getPiece().getTeam()==turn)
         moves.add(m);
     }
+
+    moves.addAll(castel(turn));
+    moves.addAll(enpassant(turn));
     return moves;
   }
 
-  //gets all "reachable" squares on the board, i.e. open spaces or opposing team
+  private List<Move> castel(Team turn) {
+	  List<Move> result = new ArrayList<Move>();
+	  if(this.isCheck()==WHITE){
+		  return result;
+	  }
+		if(turn==WHITE){
+			if(whiteCanCastelLeft){
+				if(board[0][1]==null&&board[0][2]==null){
+					ChessBoard copy1 = new ChessBoard(this);
+					ChessBoard copy2 = new ChessBoard(this);
+					copy1.move(new Move(board[0][3],0,3,0,1,false));
+					copy2.move(new Move(board[0][3],0,3,0,2,false));
+					if(copy1.isCheck()!=WHITE&&copy2.isCheck()!=WHITE){
+						result.add(new Move(board[0][3],true));
+					}
+				}
+			}
+			if(whiteCanCastelRight){
+				System.out.println(Arrays.deepToString(board));
+				if(board[0][5]==null&&board[0][6]==null){
+					ChessBoard copy0 = new ChessBoard(this);
+					ChessBoard copy1 = new ChessBoard(this);
+					ChessBoard copy2 = new ChessBoard(this);
+					copy0.move(new Move(board[0][3],0,3,0,4,false));
+					copy1.move(new Move(board[0][3],0,3,0,5,false));
+					copy2.move(new Move(board[0][3],0,3,0,6,false));
+					if(copy0.isCheck()!=WHITE && copy1.isCheck()!=WHITE&&copy2.isCheck()!=WHITE){
+						result.add(new Move(board[0][3],false));
+					}
+				}
+			}
+		}else{
+			if(blackCanCastelLeft){
+				if(board[7][1]==null&&board[7][2]==null){
+					ChessBoard copy1 = new ChessBoard(this);
+					ChessBoard copy2 = new ChessBoard(this);
+					copy1.move(new Move(board[7][3],7,3,7,1,false));
+					copy2.move(new Move(board[7][3],7,3,7,2,false));
+					if(copy1.isCheck()!=WHITE&&copy2.isCheck()!=WHITE){
+						result.add(new Move(board[7][3],true));
+					}
+				}
+			}
+			if(blackCanCastelRight){
+				System.out.println(Arrays.deepToString(board));
+				if(board[7][5]==null&&board[7][6]==null){
+					ChessBoard copy0 = new ChessBoard(this);
+					ChessBoard copy1 = new ChessBoard(this);
+					ChessBoard copy2 = new ChessBoard(this);
+					copy0.move(new Move(board[7][3],7,3,7,4,false));
+					copy1.move(new Move(board[7][3],7,3,7,5,false));
+					copy2.move(new Move(board[7][3],7,3,7,6,false));
+					if(copy0.isCheck()!=WHITE && copy1.isCheck()!=WHITE&&copy2.isCheck()!=WHITE){
+						result.add(new Move(board[7][3],false));
+					}
+				}
+			}
+		}
+		return result;
+	}
+  
+private List<Move> enpassant(Team turn) {
+	List<Move> result = new ArrayList<Move>();
+	if(lastPawnMoveFile==-1){
+		return result;
+	}
+	
+	if(turn==WHITE){
+		if(lastPawnMoveFile+1<board[4].length){
+			Peice p= board[4][lastPawnMoveFile+1];
+			
+			if(p!=null && p.getUnit()==PAWN && p.getTeam()==WHITE){
+				result.add(new Move(p, 4, lastPawnMoveFile+1, 5, lastPawnMoveFile, true));
+			}
+		}
+		if(lastPawnMoveFile-1>=0){
+			Peice p= board[4][lastPawnMoveFile-1];
+			
+			if(p!=null&& p.getUnit()==PAWN && p.getTeam()==WHITE){
+				result.add(new Move(p, 4, lastPawnMoveFile-1, 5, lastPawnMoveFile, true));
+			}
+		}
+	}else{
+		if(lastPawnMoveFile+1<board[3].length){
+			Peice p= board[3][lastPawnMoveFile+1];
+			
+			if(p!=null && p.getUnit()==PAWN && p.getTeam()==BLACK){
+				result.add(new Move(p, 3, lastPawnMoveFile+1, 2, lastPawnMoveFile, true));
+			}
+		}
+		if(lastPawnMoveFile-1>=0){
+			Peice p= board[3][lastPawnMoveFile-1];
+			
+			if(p!=null && p.getUnit()==PAWN && p.getTeam()==BLACK){
+				result.add(new Move(p, 3, lastPawnMoveFile-1, 2, lastPawnMoveFile, true));
+			}
+		}
+	}
+	return result;
+}
+
+//gets all "reachable" squares on the board, i.e. open spaces or opposing team
   public List<Move> getAllReachable() {
     List<Move> moves = new ArrayList<Move>();
     for (int i=0; i<8; i++) {
@@ -265,6 +460,9 @@ public class ChessBoard {
   //gets reachable for pawn move in any of four places
   public List<Move> pawnReach(int i, int j, int idir, int jdir) {
     List<Move> moves = new ArrayList<Move>();
+    if(idir==2 && ((board[i][j].getTeam()==BLACK && i!=6) ||(board[i][j].getTeam()==WHITE && i!=1))){
+    	return moves;
+    }
     if (board[i][j].getTeam()==BLACK)
       idir=-idir;
     int row = i+idir;
@@ -281,14 +479,8 @@ public class ChessBoard {
   }
 
   public boolean attacksKing(Move m) {
-    if (board[m.newRank()][m.newFile()]!=null)
-      if (board[m.newRank()][m.newFile()].getUnit()==KING)
+    if (board[m.newRank()][m.newFile()]!=null && board[m.newRank()][m.newFile()].getUnit()==KING)
         return true;
     return false;
   }
-
-	public boolean hasNextMove() {
-		// TODO Auto-generated method stub
-		return true;
-	}
 }

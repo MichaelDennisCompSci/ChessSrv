@@ -38,8 +38,8 @@ public class Game implements Runnable{
 		Player current=p1;
 		Player other  =p2;
 		
-		while(cb.hasNextMove()){
-			List<Move> moves= cb.getListOfMoves();
+		List<Move> moves;
+		while((moves= cb.getListOfMoves(curTeam)).size()>0){
 			List<String> strings= Move.printMoveList(moves);
 			
 			current.tell(strings);
@@ -57,7 +57,7 @@ public class Game implements Runnable{
 			String moveString;
 			int count=0;
 			do{
-        current.tell("Enter a valid move: ");
+				current.tell("Enter a valid move: ");
 				if(count>MAX_WRONG_MOVES){
 					current.tell("You lose, too many wrong moves.");
 					other.tell("Other Player made too many wrong moves.");
@@ -83,6 +83,10 @@ public class Game implements Runnable{
 				curTeam=WHITE;
 			}
 		}
+		
+		AsciiBoard ab = new AsciiBoard(cb);
+		p1.tell(ab.toBigString());
+		p2.tell(ab.toBigString());
 		
 		Team loser=cb.isCheck();
 		if(loser==null){

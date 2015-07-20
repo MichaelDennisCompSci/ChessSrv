@@ -14,7 +14,7 @@ public class AsciiBoard {
   //public static final String LINE0 = " |-----------+-----------+-----------+-----------+-----------+-----------+-----------+-----------|";
   public static final String MIDLINE = " |-----------+-----------+-----------+-----------+-----------+-----------+-----------+-----------|";  
 
-  public static final HashMap<String,String> SMALLASCII = new HashMap() {{
+  public static final HashMap<String,String> SMALLASCII = new HashMap<String,String>() {{
       put("WP","\u2659 ");
       put("WR","\u2656 ");
       put("WN","\u2658 ");
@@ -29,7 +29,7 @@ public class AsciiBoard {
       put("BK","\u265A ");
   }};
 
-  public static final HashMap<String,String[]> BIGASCII = new HashMap() {{
+  public static final HashMap<String,String[]> BIGASCII = new HashMap<String, String[]>() {{
     put("WK",new String[] {"   .::.   ",
                          "   _::_   ",
                          " _/____\\_ ",
@@ -93,14 +93,14 @@ public class AsciiBoard {
   
   public AsciiBoard() {
     board = new String[][] {
-      {"BR","BN","BB","BQ","BK","BB","BN","BR"},
+      {"BR","BN","BB","BK","BQ","BB","BN","BR"},
       {"BP","BP","BP","BP","BP","BP","BP","BP"},
       {"","","","","","","",""},
       {"","","","","","","",""},
       {"","","","","","","",""},
       {"","","","","","","",""},
       {"WP","WP","WP","WP","WP","WP","WP","WP"},
-      {"WR","WN","WB","WQ","WK","WB","WN","WR"}
+      {"WR","WN","WB","WK","WQ","WB","WN","WR"}
     };
   }
 
@@ -136,7 +136,7 @@ public class AsciiBoard {
   }
 
   public String toBigString() {
-    String boardString = ENDLINE+"\n";
+    String boardString = ENDLINE+"\n\r";
     for (int i=0; i<40; i++) {
       boardString += WHITEEDGE;
       for (int j=0; j<8; j++) {
@@ -144,13 +144,13 @@ public class AsciiBoard {
         else {boardString += toBigAscii(board[i/5][j],i,j) + WHITEEDGE;}
       }
       if (i%5==4) {
-        if ((i/5)%2==0) {boardString += "\n"+MIDLINE+"\n";}
+        if ((i/5)%2==0) {boardString += "\n\r"+MIDLINE+"\n\r";}
         else {
-          if (i==39) {boardString += "\n"+ENDLINE;}
-          else {boardString += "\n"+MIDLINE+"\n";}
+          if (i==39) {boardString += "\n\r"+ENDLINE;}
+          else {boardString += "\n\r"+MIDLINE+"\n\r";}
         }
       } else {
-        boardString += "\n";
+        boardString += "\n\r";
       }
     }
     return boardString;
