@@ -9,10 +9,55 @@ public class AsciiBoard {
   public static final String WHITEEDGE = " |";
   public static final String BLACKEDGE = "^|";
   
-  public static final String ENDLINE = " +-----------------------------------------------------------------------------------------------+";
+  public static final String ENDLINE = "           +-----------------------------------------------------------------------------------------------+";
   //public static final String BOTLINE = " +-----------+-----------+-----------+-----------+-----------+-----------+-----------+-----------+";
   //public static final String LINE0 = " |-----------+-----------+-----------+-----------+-----------+-----------+-----------+-----------|";
-  public static final String MIDLINE = " |-----------+-----------+-----------+-----------+-----------+-----------+-----------+-----------|";  
+  public static final String MIDLINE = "           |-----------+-----------+-----------+-----------+-----------+-----------+-----------+-----------|";  
+
+  public static final String FILE = "               ___          ___         _____       ___         ____       ____       _____       __ __\n              / _ |        / _ )       / ___/      / _ \\       / __/      / __/      / ___/      / // /\n             / __ |       / _  |      / /__       / // /      / _/       / _/       / (_ /      / _  /\n            /_/ |_|      /____/       \\___/      /____/      /___/      /_/         \\___/      /_//_/";
+
+  public static final HashMap<String,String> RANK = new HashMap<String,String>() {{
+      put("81","    _|    ");
+      put("82","  _|_|    ");
+      put("83","    _|    ");
+      put("84","    _|    ");
+      put("85","    _|    ");
+      put("71","   _|_|   ");
+      put("72"," _|    _| ");
+      put("73","     _|   ");
+      put("74","   _|     ");
+      put("75"," _|_|_|_| ");
+      put("61"," _|_|_|   ");
+      put("62","       _| ");
+      put("63","   _|_|   ");
+      put("64","       _| ");
+      put("65"," _|_|_|   ");
+      put("51"," _|  _|   ");
+      put("52"," _|  _|   ");
+      put("53"," _|_|_|_| ");
+      put("54","     _|   ");
+      put("55","     _|   ");
+      put("41"," _|_|_|_| ");
+      put("42"," _|       ");
+      put("43"," _|_|_|   ");
+      put("44","       _| ");
+      put("45"," _|_|_|   ");
+      put("31","   _|_|_| ");
+      put("32"," _|       ");
+      put("33"," _|_|_|   ");
+      put("34"," _|    _| ");
+      put("35","   _|_|   ");
+      put("21"," _|_|_|_| ");
+      put("22","      _|  ");
+      put("23","     _|   ");
+      put("24","    _|    ");
+      put("25","   _|     ");
+      put("11","   _|_|   ");
+      put("12"," _|    _| ");
+      put("13","   _|_|   ");
+      put("14"," _|    _| ");
+      put("15","   _|_|   ");
+  }};
 
   public static final HashMap<String,String> SMALLASCII = new HashMap<String,String>() {{
       put("WP","\u2659 ");
@@ -127,17 +172,20 @@ public class AsciiBoard {
   public String toSmallString() {
     String boardString = "";
     for (int i=0; i<8; i++) {
+      boardString += (i+1)+"  |";
       for (int j=0; j<8; j++) {
         boardString += toSmallAscii(board[i][j],i,j) + EDGE;
       }
       boardString += "\n";
     }
+    boardString += "\n    A  B  C  D  E  F  G  H\n";
     return boardString;
   }
 
   public String toBigString() {
     String boardString = ENDLINE+"\n\r";
     for (int i=0; i<40; i++) {
+      boardString += RANK.get((i/5+1)+""+(i%5+1));
       boardString += WHITEEDGE;
       for (int j=0; j<8; j++) {
         if ((i/5)%2!=j%2) {boardString += toBigAscii(board[i/5][j],i,j) + BLACKEDGE;}
@@ -153,6 +201,7 @@ public class AsciiBoard {
         boardString += "\n\r";
       }
     }
+    boardString += "\n"+FILE;
     return boardString;
   }
 
