@@ -14,7 +14,10 @@ public class AsciiBoard {
   //public static final String LINE0 = " |-----------+-----------+-----------+-----------+-----------+-----------+-----------+-----------|";
   public static final String MIDLINE = "           |-----------+-----------+-----------+-----------+-----------+-----------+-----------+-----------|";  
 
-  public static final String FILE = "               ___          ___         _____       ___         ____       ____       _____       __ __\n              / _ |        / _ )       / ___/      / _ \\       / __/      / __/      / ___/      / // /\n             / __ |       / _  |      / /__       / // /      / _/       / _/       / (_ /      / _  /\n            /_/ |_|      /____/       \\___/      /____/      /___/      /_/         \\___/      /_//_/";
+  public static final String FILE = "               ___          ___         _____       ___         ____       ____       _____       __ __\n\r"+
+		  							"              / _ |        / _ )       / ___/      / _ \\       / __/      / __/      / ___/      / // /\n\r"+
+		  							"             / __ |       / _  |      / /__       / // /      / _/       / _/       / (_ /      / _  /\n\r"+
+		  							"            /_/ |_|      /____/       \\___/      /____/      /___/      /_/         \\___/      /_//_/";
 
   public static final HashMap<String,String> RANK = new HashMap<String,String>() {{
       put("81","    _|    ");
@@ -201,7 +204,7 @@ public class AsciiBoard {
         boardString += "\n\r";
       }
     }
-    boardString += "\n"+FILE;
+    boardString += "\n\r"+FILE;
     return boardString;
   }
 

@@ -17,8 +17,8 @@ public class Player {
 		sc= new Scanner(s.getInputStream());
 		os= new PrintStream(s.getOutputStream());
 
-		os.println("Welcome!");
-		os.println("Waiting for game to start...");
+		tell("Welcome!");
+		tell("Waiting for game to start...");
 	}
 	
 	public void tell(Object o){

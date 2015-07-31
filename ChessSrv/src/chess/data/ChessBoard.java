@@ -16,24 +16,24 @@ import chess.enums.Team;
 import chess.enums.Unit;
 
 public class ChessBoard {
-	public static final Unit[][] u = new Unit[][]
-    {{ROOK,KNIGHT,BISHOP,KING,QUEEN,BISHOP,KNIGHT,ROOK},
-     {PAWN,PAWN  ,PAWN  ,PAWN ,PAWN,PAWN  ,PAWN  ,PAWN},
-     {null,null  ,null  ,null ,null,null  ,null  ,null},
-     {null,null  ,null  ,null ,null,null  ,null  ,null},
-     {null,null  ,null  ,null ,null,null  ,null  ,null},
-     {null,null  ,null  ,null ,null,null  ,null  ,null},
-     {PAWN,PAWN  ,PAWN  ,PAWN ,PAWN,PAWN  ,PAWN  ,PAWN},
-     {ROOK,KNIGHT,BISHOP,KING,QUEEN,BISHOP,KNIGHT,ROOK}};
+	public static final Unit[][] u = 
+     {{ROOK,KNIGHT,BISHOP,KING,QUEEN,BISHOP,KNIGHT,ROOK},
+      {PAWN,PAWN  ,PAWN  ,PAWN ,PAWN,PAWN  ,PAWN  ,PAWN},
+      {null,null  ,null  ,null ,null,null  ,null  ,null},
+      {null,null  ,null  ,null ,null,null  ,null  ,null},
+      {null,null  ,null  ,null ,null,null  ,null  ,null},
+      {null,null  ,null  ,null ,null,null  ,null  ,null},
+      {PAWN,PAWN  ,PAWN  ,PAWN ,PAWN,PAWN  ,PAWN  ,PAWN},
+      {ROOK,KNIGHT,BISHOP,KING,QUEEN,BISHOP,KNIGHT,ROOK}};
   public static final Team[][] t=
-  {{WHITE,WHITE,WHITE,WHITE,WHITE,WHITE,WHITE,WHITE},
-   {WHITE,WHITE,WHITE,WHITE,WHITE,WHITE,WHITE,WHITE},
-   {null, null ,null ,null ,null ,null ,null ,null },
-   {null, null ,null ,null ,null ,null ,null ,null },
-   {null, null ,null ,null ,null ,null ,null ,null },
-   {null, null ,null ,null ,null ,null ,null ,null },
-   {BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK},
-   {BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK}};
+   {{WHITE,WHITE,WHITE,WHITE,WHITE,WHITE,WHITE,WHITE},
+    {WHITE,WHITE,WHITE,WHITE,WHITE,WHITE,WHITE,WHITE},
+    {null, null ,null ,null ,null ,null ,null ,null },
+    {null, null ,null ,null ,null ,null ,null ,null },
+    {null, null ,null ,null ,null ,null ,null ,null },
+    {null, null ,null ,null ,null ,null ,null ,null },
+    {BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK},
+    {BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK}};
 	private static final int BOARD_HIGHT = 8;
 	private static final int BOARD_WIDTH = 8;
 	
@@ -76,8 +76,8 @@ public class ChessBoard {
 
   public Piece[][] copy() {
     Piece[][] newBoard = new Piece[8][8];
-    for (int i=0; i<7; i++) {
-      for (int j=0; j<7; j++) {
+    for (int i=0; i<8; i++) {
+      for (int j=0; j<8; j++) {
         newBoard[i][j] = board[i][j];
       }
     }
@@ -174,10 +174,13 @@ public class ChessBoard {
 	}
 
 	public List<Move> getListOfMoves(Team turn) {
+		System.out.println("Called with:"+turn);
     List<Move> moves = new ArrayList<Move>();
     for (Move m : getAllReachable()) {
       ChessBoard copy = new ChessBoard(this);
       copy.move(m);
+      System.out.println(m.getPiece());
+      System.out.println(Arrays.deepToString(copy.board).replace("], [","]\n["));
       if (!copy.isCheck(turn) && m.getPiece().getTeam()==turn)
         moves.add(m);
     }
@@ -368,7 +371,7 @@ private List<Move> enpassant(Team turn) {
     moves.addAll(kingReach(i,j,1,-1));
     moves.addAll(kingReach(i,j,-1,1));
     moves.addAll(kingReach(i,j,-1,0));
-    moves.addAll(kingReach(i,j,-1,1));
+    moves.addAll(kingReach(i,j,-1,-1));
     moves.addAll(kingReach(i,j,0,1));
     moves.addAll(kingReach(i,j,0,-1));
     return moves;
