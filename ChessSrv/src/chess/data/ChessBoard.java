@@ -237,7 +237,7 @@ public class ChessBoard {
 					copy0.move(new Move(board[7][3],7,3,7,4,false));
 					copy1.move(new Move(board[7][3],7,3,7,5,false));
 					copy2.move(new Move(board[7][3],7,3,7,6,false));
-					if(!copy0.isCheck(turn)&& copy1.isCheck(turn)&&copy2.isCheck(turn)){
+					if(!copy0.isCheck(turn)&& !copy1.isCheck(turn)&&!copy2.isCheck(turn)){
 						result.add(new Move(board[7][3],false));
 					}
 				}
