@@ -88,7 +88,7 @@ public class Game implements Runnable{
 		p1.tell(ab.toBigString());
 		p2.tell(ab.toBigString());
 		
-		Team loser=cb.isCheck();
+		Team loser=(cb.isCheck(WHITE))?WHITE:((cb.isCheck(BLACK))?BLACK:null);
 		if(loser==null){
 			p1.tell("draw");
 			p2.tell("draw");

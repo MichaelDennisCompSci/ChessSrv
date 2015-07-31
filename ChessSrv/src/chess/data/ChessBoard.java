@@ -84,16 +84,17 @@ public class ChessBoard {
     return newBoard;
   }
 
-	public Team isCheck() {
+	public boolean isCheck(Team t) {
 		for (Move m: getAllReachable()) {
-			if (attacksKing(m)){
-				Team t= board[m.newRank()][m.newFile()].getTeam();
-				if(m.getPiece().getTeam()!=t){
-					return t;
+			if(m.getPiece().getTeam()!=t){
+				if(board[m.newRank()][m.newFile()]!=null
+				 &&board[m.newRank()][m.newFile()].getUnit()==KING
+				 &&board[m.newRank()][m.newFile()].getTeam()==t){
+						return true;
 				}
 			}
 		}
-		return null;
+		return false;
 	}
 
 	public void move(Move move) {
@@ -157,6 +158,7 @@ public class ChessBoard {
 			lastPawnMoveFile=move.newFile();
 		}
 		if(move.oldFile()!=move.newFile()&& board[move.newRank()][move.newFile()]==null){
+			lastPawnMoveFile=-1;
 			if(move.getPiece().getTeam()==WHITE){
 				board[move.newRank()-1][move.newFile()]=null;
 			}else{
@@ -179,7 +181,7 @@ public class ChessBoard {
     for (Move m : getAllReachable()) {
       ChessBoard copy = new ChessBoard(this);
       copy.move(m);
-      if (copy.isCheck()!=turn && m.getPiece().getTeam()==turn)
+      if (!copy.isCheck(turn) && m.getPiece().getTeam()==turn)
         moves.add(m);
     }
 
@@ -190,7 +192,7 @@ public class ChessBoard {
 
   private List<Move> castel(Team turn) {
 	  List<Move> result = new ArrayList<Move>();
-	  if(this.isCheck()==WHITE){
+	  if(this.isCheck(turn)){
 		  return result;
 	  }
 		if(turn==WHITE){
@@ -200,7 +202,7 @@ public class ChessBoard {
 					ChessBoard copy2 = new ChessBoard(this);
 					copy1.move(new Move(board[0][3],0,3,0,1,false));
 					copy2.move(new Move(board[0][3],0,3,0,2,false));
-					if(copy1.isCheck()!=WHITE&&copy2.isCheck()!=WHITE){
+					if(!copy1.isCheck(turn)&&!copy2.isCheck(turn)){
 						result.add(new Move(board[0][3],true));
 					}
 				}
@@ -213,7 +215,7 @@ public class ChessBoard {
 					copy0.move(new Move(board[0][3],0,3,0,4,false));
 					copy1.move(new Move(board[0][3],0,3,0,5,false));
 					copy2.move(new Move(board[0][3],0,3,0,6,false));
-					if(copy0.isCheck()!=WHITE && copy1.isCheck()!=WHITE&&copy2.isCheck()!=WHITE){
+					if(!copy0.isCheck(turn)&& !copy1.isCheck(turn)&&!copy2.isCheck(turn)){
 						result.add(new Move(board[0][3],false));
 					}
 				}
@@ -225,7 +227,7 @@ public class ChessBoard {
 					ChessBoard copy2 = new ChessBoard(this);
 					copy1.move(new Move(board[7][3],7,3,7,1,false));
 					copy2.move(new Move(board[7][3],7,3,7,2,false));
-					if(copy1.isCheck()!=WHITE&&copy2.isCheck()!=WHITE){
+					if(!copy1.isCheck(turn)&&!copy2.isCheck(turn)){
 						result.add(new Move(board[7][3],true));
 					}
 				}
@@ -238,7 +240,7 @@ public class ChessBoard {
 					copy0.move(new Move(board[7][3],7,3,7,4,false));
 					copy1.move(new Move(board[7][3],7,3,7,5,false));
 					copy2.move(new Move(board[7][3],7,3,7,6,false));
-					if(copy0.isCheck()!=WHITE && copy1.isCheck()!=WHITE&&copy2.isCheck()!=WHITE){
+					if(!copy0.isCheck(turn)&& copy1.isCheck(turn)&&copy2.isCheck(turn)){
 						result.add(new Move(board[7][3],false));
 					}
 				}
@@ -491,11 +493,5 @@ private List<Move> enpassant(Team turn) {
     	  }
     }
     return moves;
-  }
-
-  public boolean attacksKing(Move m) {
-    if (board[m.newRank()][m.newFile()]!=null && board[m.newRank()][m.newFile()].getUnit()==KING)
-        return true;
-    return false;
   }
 }
