@@ -5,9 +5,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import chess.enums.Unit;
+
 public class Move {
 	private String s;
-	private Peice p;
+	private Piece p;
 	private int oldRank;
 	private int oldFile;
 	private int newRank;
@@ -15,19 +17,28 @@ public class Move {
 	private boolean takes;
 	private boolean isCastling;
 	private boolean isKingSide;
+	private boolean isPromo;
+	private Unit promo;
 	
 	public Move(String sIn) {
 		s=sIn;
 	}
 	
-	public Move(Peice pIn, boolean isKingSideIn){
+	public Move(Piece pIn, boolean isKingSideIn){
 		p=pIn;
 		isCastling=true;
 		isKingSide=isKingSideIn;
 		s=(isKingSide)?"O-O":"O-O-O";
 	}
 	
-	public Move(Peice pIn, int oldRankIn, int oldFileIn, int newRankIn, int newFileIn, boolean takesIn){
+	public Move(Piece pIn, int oldRankIn, int oldFileIn, int newRankIn, int newFileIn, boolean takesIn, Unit promoIn){
+		this(pIn,oldRankIn,oldFileIn,newRankIn,newFileIn,takesIn);
+		promo=promoIn;
+		isPromo=true;
+		
+	}
+	
+	public Move(Piece pIn, int oldRankIn, int oldFileIn, int newRankIn, int newFileIn, boolean takesIn){
 		p=pIn;
 		oldRank=oldRankIn;
 		oldFile=oldFileIn;
@@ -80,7 +91,7 @@ public class Move {
 		return isKingSide;
 	}
 	
-	public Peice getPiece(){
+	public Piece getPiece(){
 		return p;
 	}
 	
@@ -100,6 +111,10 @@ public class Move {
 		return oldFile;
 	}
 	
+	public Unit getPromo(){
+		return promo;
+	}
+	
 	public boolean takes(){
 		return takes;
 	}
@@ -108,12 +123,16 @@ public class Move {
 		return s;
 	}
 	
+	public boolean isPromo(){
+		return isPromo;
+	}
+	
 	public static List<String> printMoveList(List<Move> moves){ //Array list in same order as moves
 		
 		List<String> result= new ArrayList<String>();
 		
-		Peice[][] destinations= new Peice[8][8];
-		Set<Peice> ambiguos = new HashSet<Peice>();
+		Piece[][] destinations= new Piece[8][8];
+		Set<Piece> ambiguos = new HashSet<Piece>();
 		
 		for(Move move:moves){
 			if(destinations[move.newRank][move.newFile]!=null){
@@ -159,9 +178,30 @@ public class Move {
 						sb.append("x");
 					}
 					
-					//rank and file are being stored backwards...
+					}
+					
 					sb.append(fileString(move.newFile));
 					sb.append(rankString(move.newRank));
+					
+					if(move.isPromo()){
+						sb.append("=");
+						switch(move.getPromo()){
+						case QUEEN:
+							sb.append("Q");
+							break;
+						case KNIGHT:
+							sb.append("N");
+							break;
+						case BISHOP:
+							sb.append("B");
+							break;
+						case ROOK:
+							sb.append("R");
+							break;
+						default:
+							throw null;
+						}
+					
 					
 				}
 			}

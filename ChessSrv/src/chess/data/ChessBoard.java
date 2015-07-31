@@ -37,7 +37,7 @@ public class ChessBoard {
 	private static final int BOARD_HIGHT = 8;
 	private static final int BOARD_WIDTH = 8;
 	
-	private Peice[][] board= new Peice[BOARD_HIGHT][BOARD_WIDTH];  //[rank][file]
+	private Piece[][] board= new Piece[BOARD_HIGHT][BOARD_WIDTH];  //[rank][file]
 	private int lastPawnMoveFile;
 	private boolean whiteCanCastelLeft;
 	private boolean whiteCanCastelRight;
@@ -50,7 +50,7 @@ public class ChessBoard {
         if (u[rank][file]==null && t[rank][file]==null)
           board[rank][file]=null;
         else
-          board[rank][file]=new Peice(u[rank][file],t[rank][file]);
+          board[rank][file]=new Piece(u[rank][file],t[rank][file]);
 			}
 		}
 		lastPawnMoveFile=-1;
@@ -70,12 +70,12 @@ public class ChessBoard {
 		blackCanCastelRight=cb.blackCanCastelRight;
 	}
 
-  public Peice[][] getBoard() {
+  public Piece[][] getBoard() {
     return board;
   }
 
-  public Peice[][] copy() {
-    Peice[][] newBoard = new Peice[8][8];
+  public Piece[][] copy() {
+    Piece[][] newBoard = new Piece[8][8];
     for (int i=0; i<7; i++) {
       for (int j=0; j<7; j++) {
         newBoard[i][j] = board[i][j];
@@ -165,13 +165,16 @@ public class ChessBoard {
 		}
 	}
 	
+	Piece p=move.getPiece();
+	if(move.isPromo()){
+		p=new Piece(move.getPromo(), move.getPiece().getTeam());
+	}
+	
     board[move.oldRank()][move.oldFile()]=null;
-    board[move.newRank()][move.newFile()]=move.getPiece();
+    board[move.newRank()][move.newFile()]=p;
 	}
 
 	public List<Move> getListOfMoves(Team turn) {
-		System.out.println(whiteCanCastelLeft);
-		System.out.println(whiteCanCastelRight);
     List<Move> moves = new ArrayList<Move>();
     for (Move m : getAllReachable()) {
       ChessBoard copy = new ChessBoard(this);
@@ -203,7 +206,6 @@ public class ChessBoard {
 				}
 			}
 			if(whiteCanCastelRight){
-				System.out.println(Arrays.deepToString(board));
 				if(board[0][5]==null&&board[0][6]==null){
 					ChessBoard copy0 = new ChessBoard(this);
 					ChessBoard copy1 = new ChessBoard(this);
@@ -229,7 +231,6 @@ public class ChessBoard {
 				}
 			}
 			if(blackCanCastelRight){
-				System.out.println(Arrays.deepToString(board));
 				if(board[7][5]==null&&board[7][6]==null){
 					ChessBoard copy0 = new ChessBoard(this);
 					ChessBoard copy1 = new ChessBoard(this);
@@ -254,14 +255,14 @@ private List<Move> enpassant(Team turn) {
 	
 	if(turn==WHITE){
 		if(lastPawnMoveFile+1<board[4].length){
-			Peice p= board[4][lastPawnMoveFile+1];
+			Piece p= board[4][lastPawnMoveFile+1];
 			
 			if(p!=null && p.getUnit()==PAWN && p.getTeam()==WHITE){
 				result.add(new Move(p, 4, lastPawnMoveFile+1, 5, lastPawnMoveFile, true));
 			}
 		}
 		if(lastPawnMoveFile-1>=0){
-			Peice p= board[4][lastPawnMoveFile-1];
+			Piece p= board[4][lastPawnMoveFile-1];
 			
 			if(p!=null&& p.getUnit()==PAWN && p.getTeam()==WHITE){
 				result.add(new Move(p, 4, lastPawnMoveFile-1, 5, lastPawnMoveFile, true));
@@ -269,14 +270,14 @@ private List<Move> enpassant(Team turn) {
 		}
 	}else{
 		if(lastPawnMoveFile+1<board[3].length){
-			Peice p= board[3][lastPawnMoveFile+1];
+			Piece p= board[3][lastPawnMoveFile+1];
 			
 			if(p!=null && p.getUnit()==PAWN && p.getTeam()==BLACK){
 				result.add(new Move(p, 3, lastPawnMoveFile+1, 2, lastPawnMoveFile, true));
 			}
 		}
 		if(lastPawnMoveFile-1>=0){
-			Peice p= board[3][lastPawnMoveFile-1];
+			Piece p= board[3][lastPawnMoveFile-1];
 			
 			if(p!=null && p.getUnit()==PAWN && p.getTeam()==BLACK){
 				result.add(new Move(p, 3, lastPawnMoveFile-1, 2, lastPawnMoveFile, true));
@@ -470,10 +471,24 @@ private List<Move> enpassant(Team turn) {
     if (row<8 && row>=0 && col<8 && col>=0) {
       if (board[row][col]!=null && jdir!=0) {
         if (board[row][col].getTeam()!=board[i][j].getTeam())
-          moves.add(new Move(board[i][j],i,j,row,col,true));
+        	if((board[i][j].getTeam()==BLACK && row!=0)||(board[i][j].getTeam()==WHITE && row!=7)){
+        		moves.add(new Move(board[i][j],i,j,row,col,true));
+        	}else{
+        		moves.add(new Move(board[i][j],i,j,row,col,true,ROOK));
+        		moves.add(new Move(board[i][j],i,j,row,col,true,KNIGHT));
+        		moves.add(new Move(board[i][j],i,j,row,col,true,BISHOP));
+        		moves.add(new Move(board[i][j],i,j,row,col,true,QUEEN));
+        	}
       }
       if (board[row][col]==null && jdir==0)
-        moves.add(new Move(board[i][j],i,j,row,col,false));
+    	  if((board[i][j].getTeam()==BLACK && row!=0)||(board[i][j].getTeam()==WHITE && row!=7)){
+    		  moves.add(new Move(board[i][j],i,j,row,col,false));
+    	  }else{
+    		  	moves.add(new Move(board[i][j],i,j,row,col,true,ROOK));
+    		  	moves.add(new Move(board[i][j],i,j,row,col,true,KNIGHT));
+    		  	moves.add(new Move(board[i][j],i,j,row,col,true,BISHOP));
+    		  	moves.add(new Move(board[i][j],i,j,row,col,true,QUEEN));
+    	  }
     }
     return moves;
   }

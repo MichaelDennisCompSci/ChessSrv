@@ -4,11 +4,11 @@ import chess.enums.Team;
 import chess.enums.Unit;
 
 //Default hash code and equals are necessary
-public class Peice { 
+public class Piece { 
 	private Unit u;
 	private Team t;
 	
-	public Peice(Unit uIn, Team tIn){
+	public Piece(Unit uIn, Team tIn){
 		u=uIn;
 		t=tIn;
 	}
