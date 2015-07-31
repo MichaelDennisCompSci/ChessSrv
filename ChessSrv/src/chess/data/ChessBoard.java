@@ -98,8 +98,8 @@ public class ChessBoard {
 	}
 
 	public void move(Move move) {
+	lastPawnMoveFile=-1;
 	if(move.isCastling()){
-		lastPawnMoveFile=-1;
 		int rank=0;
 		if(move.getPiece().getTeam()==WHITE){
 			whiteCanCastelLeft=false;
@@ -151,14 +151,11 @@ public class ChessBoard {
 		}
 	}
 	
-	if(move.getPiece().getUnit()!=PAWN){
-		lastPawnMoveFile=-1;
-	}else{
+	if(move.getPiece().getUnit()==PAWN){
 		if(Math.abs(move.oldRank()-move.newRank())==2){
 			lastPawnMoveFile=move.newFile();
 		}
 		if(move.oldFile()!=move.newFile()&& board[move.newRank()][move.newFile()]==null){
-			lastPawnMoveFile=-1;
 			if(move.getPiece().getTeam()==WHITE){
 				board[move.newRank()-1][move.newFile()]=null;
 			}else{
