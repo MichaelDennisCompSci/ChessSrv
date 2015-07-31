@@ -463,7 +463,7 @@ private List<Move> enpassant(Team turn) {
   //gets reachable for pawn move in any of four places
   public List<Move> pawnReach(int i, int j, int idir, int jdir) {
     List<Move> moves = new ArrayList<Move>();
-    if(idir==2 && ((board[i][j].getTeam()==BLACK && i!=6) ||(board[i][j].getTeam()==WHITE && i!=1))){
+    if(idir==2 && ((board[i][j].getTeam()==BLACK && i!=6) || (board[i][j].getTeam()==WHITE && i!=1))){
     	return moves;
     }
     if (board[i][j].getTeam()==BLACK)
@@ -482,7 +482,7 @@ private List<Move> enpassant(Team turn) {
         		moves.add(new Move(board[i][j],i,j,row,col,true,QUEEN));
         	}
       }
-      if (board[row][col]==null && jdir==0)
+      if (board[row][col]==null && jdir==0 && (Math.abs(idir)==1 || board[row-(idir/2)][j]==null))
     	  if((board[i][j].getTeam()==BLACK && row!=0)||(board[i][j].getTeam()==WHITE && row!=7)){
     		  moves.add(new Move(board[i][j],i,j,row,col,false));
     	  }else{

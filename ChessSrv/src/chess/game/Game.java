@@ -69,7 +69,13 @@ public class Game implements Runnable{
 				}
 				count++;
 				moveString=current.getMoveString();
-			}while(!stringToMove.containsKey(moveString));
+			}while(!(stringToMove.containsKey(moveString) || moveString.equals("FORFEIT")));
+			if (moveString.equals("FORFEIT")) {
+				String s=((curTeam==WHITE)?"BLACK":"WHITE")+" team Wins";
+				current.tell(s);
+				other.tell(s);
+				return;
+			}
 			cb.move(stringToMove.get(moveString));
 			other.tell("The other player moved: "+moveString);
 			
