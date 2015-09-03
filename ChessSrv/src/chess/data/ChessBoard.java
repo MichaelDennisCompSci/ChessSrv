@@ -70,6 +70,49 @@ public class ChessBoard {
 		blackCanCastelRight=cb.blackCanCastelRight;
 	}
 
+  public ChessBoard(String boardString) {
+    String[] boardArr = boardString.split(";");
+    for (int i=0; i<boardArr.length-1; i++) {
+      String rowString = boardArr[i];
+      int j = 0;
+      for (String pieceString : rowString.split(",")) {
+        if (pieceString.contains("null")) {
+          board[i][j] = null;
+        } else {
+          board[i][j] = new Piece(pieceString);
+        }
+        j++;
+      }
+    }
+    int i = boardArr.length-1;
+    String[] extraInfo = boardArr[i].split(",");
+    lastPawnMoveFile = Integer.parseInt(extraInfo[0]);
+    whiteCanCastelLeft = Boolean.parseBoolean(extraInfo[1]);
+    whiteCanCastelRight = Boolean.parseBoolean(extraInfo[2]);
+    blackCanCastelLeft = Boolean.parseBoolean(extraInfo[3]);
+    blackCanCastelRight = Boolean.parseBoolean(extraInfo[4]);
+  }
+
+  public int getLastPawnMoveFile() {
+    return lastPawnMoveFile;
+  }
+
+  public boolean getWhiteCanCastelLeft() {
+    return whiteCanCastelLeft;
+  }
+
+  public boolean getWhiteCanCastelRight() {
+    return whiteCanCastelRight;
+  }
+
+  public boolean getBlackCanCastelLeft() {
+    return blackCanCastelLeft;
+  }
+
+  public boolean getBlackCanCastelRight() {
+    return blackCanCastelRight;
+  }
+
   public Piece[][] getBoard() {
     return board;
   }
@@ -174,13 +217,10 @@ public class ChessBoard {
 	}
 
 	public List<Move> getListOfMoves(Team turn) {
-		System.out.println("Called with:"+turn);
     List<Move> moves = new ArrayList<Move>();
     for (Move m : getAllReachable()) {
       ChessBoard copy = new ChessBoard(this);
       copy.move(m);
-      System.out.println(m.getPiece());
-      System.out.println(Arrays.deepToString(copy.board).replace("], [","]\n["));
       if (!copy.isCheck(turn) && m.getPiece().getTeam()==turn)
         moves.add(m);
     }

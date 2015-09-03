@@ -12,6 +12,27 @@ public class Piece {
 		u=uIn;
 		t=tIn;
 	}
+  
+  public Piece(String pieceString) {
+    if (pieceString.charAt(0)=='W') {
+      t = Team.WHITE;
+    } else {
+      t = Team.BLACK;
+    }
+    if (pieceString.charAt(1)=='P') {
+      u = Unit.PAWN;
+    } else if (pieceString.charAt(1)=='B') {
+      u = Unit.BISHOP;
+    } else if (pieceString.charAt(1)=='N') {
+      u = Unit.KNIGHT;
+    } else if (pieceString.charAt(1)=='R') {
+      u = Unit.ROOK;
+    } else if (pieceString.charAt(1)=='Q') {
+      u = Unit.QUEEN;
+    } else {
+      u = Unit.KING;
+    }
+  }
 
 	public Unit getUnit() {
 		return u;

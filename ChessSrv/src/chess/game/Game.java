@@ -11,7 +11,6 @@ import chess.data.Move;
 import chess.data.AsciiBoard;
 import chess.enums.Team;
 
-
 public class Game implements Runnable{
 	private static final int MAX_WRONG_MOVES = 10;
 	private Player p1;
@@ -40,13 +39,28 @@ public class Game implements Runnable{
 		
 		List<Move> moves;
 		while((moves= cb.getListOfMoves(curTeam)).size()>0){
+			try {
+			    Thread.sleep(000);                 //1000 milliseconds is one second
+			} catch(InterruptedException ex) {
+				System.out.println("Thread shit gone wrong");
+			    Thread.currentThread().interrupt();
+			}
+			
 			List<String> strings= Move.printMoveList(moves);
 			
 			current.tell(strings);
 			
 			AsciiBoard ab = new AsciiBoard(cb);
-			p1.tell(ab.toBigString());
-			p2.tell(ab.toBigString());
+			if (p1.isBot()) {
+        p1.tell(ab.botString());
+      } else {
+				p1.tell(ab.toBigString());
+			}	
+      if (p2.isBot()) {
+        p2.tell(ab.botString());
+      } else {
+				p2.tell(ab.toBigString());
+			}	
 			
 			Map<String,Move> stringToMove= new HashMap<String,Move>();
 			
@@ -62,7 +76,7 @@ public class Game implements Runnable{
 					current.tell("You lose, too many wrong moves.");
 					other.tell("Other Player made too many wrong moves.");
 					
-					String s=((curTeam==WHITE)?"BLACK":"WHITE")+" team Wins";
+					String s=((curTeam==WHITE)?"BLACK":"WHITE")+" Wins";
 					current.tell(s);
 					other.tell(s);
 					return;
@@ -71,11 +85,12 @@ public class Game implements Runnable{
 				moveString=current.getMoveString();
 			}while(!(stringToMove.containsKey(moveString) || moveString.equals("FORFEIT")));
 			if (moveString.equals("FORFEIT")) {
-				String s=((curTeam==WHITE)?"BLACK":"WHITE")+" team Wins";
+				String s=((curTeam==WHITE)?"BLACK":"WHITE")+" wins";
 				current.tell(s);
 				other.tell(s);
 				return;
 			}
+			
 			cb.move(stringToMove.get(moveString));
 			other.tell("The other player moved: "+moveString);
 			

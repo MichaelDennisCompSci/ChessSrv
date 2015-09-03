@@ -11,6 +11,7 @@ public class Player {
 	private Socket s;
 	private Scanner sc;
 	private PrintStream os;
+	private boolean isBot;
 	
 	public Player(Socket sIn) throws IOException{
 		s=sIn;
@@ -18,7 +19,18 @@ public class Player {
 		os= new PrintStream(s.getOutputStream());
 
 		tell("Welcome!");
+		tell("Are you a human?");
+		String answer = sc.nextLine();
+		if (answer.equals("no")) {
+			isBot = true;
+		} else {
+			isBot = false;
+		}	
 		tell("Waiting for game to start...");
+	}
+	
+	public boolean isBot() {
+		return isBot;
 	}
 	
 	public void tell(Object o){
