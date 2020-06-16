@@ -11,14 +11,26 @@ public class Player {
 	private Socket s;
 	private Scanner sc;
 	private PrintStream os;
+	private boolean isBot;
 	
 	public Player(Socket sIn) throws IOException{
 		s=sIn;
 		sc= new Scanner(s.getInputStream());
 		os= new PrintStream(s.getOutputStream());
 
-		os.println("Welcome!");
-		os.println("Waiting for game to start...");
+		tell("Welcome!");
+		tell("Are you a human?");
+		String answer = sc.nextLine();
+		if (answer.equals("no")) {
+			isBot = true;
+		} else {
+			isBot = false;
+		}	
+		tell("Waiting for game to start...");
+	}
+	
+	public boolean isBot() {
+		return isBot;
 	}
 	
 	public void tell(Object o){

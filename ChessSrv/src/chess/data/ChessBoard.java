@@ -16,24 +16,24 @@ import chess.enums.Team;
 import chess.enums.Unit;
 
 public class ChessBoard {
-	public static final Unit[][] u = new Unit[][]
-    {{ROOK,KNIGHT,BISHOP,KING,QUEEN,BISHOP,KNIGHT,ROOK},
-     {PAWN,PAWN  ,PAWN  ,PAWN ,PAWN,PAWN  ,PAWN  ,PAWN},
-     {null,null  ,null  ,null ,null,null  ,null  ,null},
-     {null,null  ,null  ,null ,null,null  ,null  ,null},
-     {null,null  ,null  ,null ,null,null  ,null  ,null},
-     {null,null  ,null  ,null ,null,null  ,null  ,null},
-     {PAWN,PAWN  ,PAWN  ,PAWN ,PAWN,PAWN  ,PAWN  ,PAWN},
-     {ROOK,KNIGHT,BISHOP,KING,QUEEN,BISHOP,KNIGHT,ROOK}};
+	public static final Unit[][] u = 
+     {{ROOK,KNIGHT,BISHOP,KING,QUEEN,BISHOP,KNIGHT,ROOK},
+      {PAWN,PAWN  ,PAWN  ,PAWN ,PAWN,PAWN  ,PAWN  ,PAWN},
+      {null,null  ,null  ,null ,null,null  ,null  ,null},
+      {null,null  ,null  ,null ,null,null  ,null  ,null},
+      {null,null  ,null  ,null ,null,null  ,null  ,null},
+      {null,null  ,null  ,null ,null,null  ,null  ,null},
+      {PAWN,PAWN  ,PAWN  ,PAWN ,PAWN,PAWN  ,PAWN  ,PAWN},
+      {ROOK,KNIGHT,BISHOP,KING,QUEEN,BISHOP,KNIGHT,ROOK}};
   public static final Team[][] t=
-  {{WHITE,WHITE,WHITE,WHITE,WHITE,WHITE,WHITE,WHITE},
-   {WHITE,WHITE,WHITE,WHITE,WHITE,WHITE,WHITE,WHITE},
-   {null, null ,null ,null ,null ,null ,null ,null },
-   {null, null ,null ,null ,null ,null ,null ,null },
-   {null, null ,null ,null ,null ,null ,null ,null },
-   {null, null ,null ,null ,null ,null ,null ,null },
-   {BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK},
-   {BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK}};
+   {{WHITE,WHITE,WHITE,WHITE,WHITE,WHITE,WHITE,WHITE},
+    {WHITE,WHITE,WHITE,WHITE,WHITE,WHITE,WHITE,WHITE},
+    {null, null ,null ,null ,null ,null ,null ,null },
+    {null, null ,null ,null ,null ,null ,null ,null },
+    {null, null ,null ,null ,null ,null ,null ,null },
+    {null, null ,null ,null ,null ,null ,null ,null },
+    {BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK},
+    {BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK}};
 	private static final int BOARD_HIGHT = 8;
 	private static final int BOARD_WIDTH = 8;
 	
@@ -70,14 +70,57 @@ public class ChessBoard {
 		blackCanCastelRight=cb.blackCanCastelRight;
 	}
 
+  public ChessBoard(String boardString) {
+    String[] boardArr = boardString.split(";");
+    for (int i=0; i<boardArr.length-1; i++) {
+      String rowString = boardArr[i];
+      int j = 0;
+      for (String pieceString : rowString.split(",")) {
+        if (pieceString.contains("null")) {
+          board[i][j] = null;
+        } else {
+          board[i][j] = new Piece(pieceString);
+        }
+        j++;
+      }
+    }
+    int i = boardArr.length-1;
+    String[] extraInfo = boardArr[i].split(",");
+    lastPawnMoveFile = Integer.parseInt(extraInfo[0]);
+    whiteCanCastelLeft = Boolean.parseBoolean(extraInfo[1]);
+    whiteCanCastelRight = Boolean.parseBoolean(extraInfo[2]);
+    blackCanCastelLeft = Boolean.parseBoolean(extraInfo[3]);
+    blackCanCastelRight = Boolean.parseBoolean(extraInfo[4]);
+  }
+
+  public int getLastPawnMoveFile() {
+    return lastPawnMoveFile;
+  }
+
+  public boolean getWhiteCanCastelLeft() {
+    return whiteCanCastelLeft;
+  }
+
+  public boolean getWhiteCanCastelRight() {
+    return whiteCanCastelRight;
+  }
+
+  public boolean getBlackCanCastelLeft() {
+    return blackCanCastelLeft;
+  }
+
+  public boolean getBlackCanCastelRight() {
+    return blackCanCastelRight;
+  }
+
   public Piece[][] getBoard() {
     return board;
   }
 
   public Piece[][] copy() {
     Piece[][] newBoard = new Piece[8][8];
-    for (int i=0; i<7; i++) {
-      for (int j=0; j<7; j++) {
+    for (int i=0; i<8; i++) {
+      for (int j=0; j<8; j++) {
         newBoard[i][j] = board[i][j];
       }
     }
@@ -368,7 +411,7 @@ private List<Move> enpassant(Team turn) {
     moves.addAll(kingReach(i,j,1,-1));
     moves.addAll(kingReach(i,j,-1,1));
     moves.addAll(kingReach(i,j,-1,0));
-    moves.addAll(kingReach(i,j,-1,1));
+    moves.addAll(kingReach(i,j,-1,-1));
     moves.addAll(kingReach(i,j,0,1));
     moves.addAll(kingReach(i,j,0,-1));
     return moves;
@@ -460,7 +503,7 @@ private List<Move> enpassant(Team turn) {
   //gets reachable for pawn move in any of four places
   public List<Move> pawnReach(int i, int j, int idir, int jdir) {
     List<Move> moves = new ArrayList<Move>();
-    if(idir==2 && ((board[i][j].getTeam()==BLACK && i!=6) ||(board[i][j].getTeam()==WHITE && i!=1))){
+    if(idir==2 && ((board[i][j].getTeam()==BLACK && i!=6) || (board[i][j].getTeam()==WHITE && i!=1))){
     	return moves;
     }
     if (board[i][j].getTeam()==BLACK)
@@ -479,7 +522,7 @@ private List<Move> enpassant(Team turn) {
         		moves.add(new Move(board[i][j],i,j,row,col,true,QUEEN));
         	}
       }
-      if (board[row][col]==null && jdir==0)
+      if (board[row][col]==null && jdir==0 && (Math.abs(idir)==1 || board[row-(idir/2)][j]==null))
     	  if((board[i][j].getTeam()==BLACK && row!=0)||(board[i][j].getTeam()==WHITE && row!=7)){
     		  moves.add(new Move(board[i][j],i,j,row,col,false));
     	  }else{

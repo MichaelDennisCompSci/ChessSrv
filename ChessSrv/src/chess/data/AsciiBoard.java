@@ -1,10 +1,16 @@
 package chess.data;
 
 import java.util.HashMap;
+import java.util.Arrays;
 
 public class AsciiBoard {
   
-  String[][] board;
+  private String[][] board;
+	private int lastPawnMoveFile;
+	private boolean whiteCanCastelLeft;
+	private boolean whiteCanCastelRight;
+	private boolean blackCanCastelLeft;
+	private boolean blackCanCastelRight;
   public static final String EDGE = "|";
   public static final String WHITEEDGE = " |";
   public static final String BLACKEDGE = "^|";
@@ -14,7 +20,10 @@ public class AsciiBoard {
   //public static final String LINE0 = " |-----------+-----------+-----------+-----------+-----------+-----------+-----------+-----------|";
   public static final String MIDLINE = "           |-----------+-----------+-----------+-----------+-----------+-----------+-----------+-----------|";  
 
-  public static final String FILE = "               ___          ___         _____       ___         ____       ____       _____       __ __\n              / _ |        / _ )       / ___/      / _ \\       / __/      / __/      / ___/      / // /\n             / __ |       / _  |      / /__       / // /      / _/       / _/       / (_ /      / _  /\n            /_/ |_|      /____/       \\___/      /____/      /___/      /_/         \\___/      /_//_/";
+  public static final String FILE = "               ___          ___         _____       ___         ____       ____       _____       __ __\n\r"+
+		  							"              / _ |        / _ )       / ___/      / _ \\       / __/      / __/      / ___/      / // /\n\r"+
+		  							"             / __ |       / _  |      / /__       / // /      / _/       / _/       / (_ /      / _  /\n\r"+
+		  							"            /_/ |_|      /____/       \\___/      /____/      /___/      /_/         \\___/      /_//_/";
 
   public static final HashMap<String,String> RANK = new HashMap<String,String>() {{
       put("81","    _|    ");
@@ -147,18 +156,29 @@ public class AsciiBoard {
       {"WP","WP","WP","WP","WP","WP","WP","WP"},
       {"WR","WN","WB","WK","WQ","WB","WN","WR"}
     };
+    lastPawnMoveFile = -1;
+    whiteCanCastelLeft = true;
+    whiteCanCastelRight = true;
+    blackCanCastelLeft = true;
+    blackCanCastelRight = true;
   }
 
   public AsciiBoard(ChessBoard cb) {
     board = new String[8][8];
     for (int i=0; i<8; i++) {
       for (int j=0; j<8; j++) {
-        if (cb.getBoard()[7-i][7-j]!=null)
+        if (cb.getBoard()[7-i][7-j]!=null) {
           board[i][j]=cb.getBoard()[7-i][7-j].toString();
-        else
+        } else {
           board[i][j]="";
+        }
       }
     }
+    lastPawnMoveFile = cb.getLastPawnMoveFile();
+    whiteCanCastelLeft = cb.getWhiteCanCastelLeft();
+    whiteCanCastelRight = cb.getWhiteCanCastelRight();
+    blackCanCastelLeft = cb.getBlackCanCastelLeft();
+    blackCanCastelRight = cb.getBlackCanCastelRight();
   }
 
   public void printSmall() {
@@ -168,6 +188,23 @@ public class AsciiBoard {
   public void printBig() {
     System.out.println(this.toBigString());
   }
+  
+  public String botString() {
+    String bs = "";
+    bs += "BOARD";
+    for (String[] row : board) {
+      for (String piece : row) {
+        if (piece.length()>0) {
+          bs += piece+",";
+        } else {
+          bs += "null"+",";
+        }
+      }
+      bs = bs.substring(0,bs.length()-1) + ";";
+    }
+    bs += lastPawnMoveFile+","+whiteCanCastelLeft+","+whiteCanCastelRight+","+blackCanCastelLeft+","+blackCanCastelRight;
+    return bs;
+  }
 
   public String toSmallString() {
     String boardString = "";
@@ -176,9 +213,9 @@ public class AsciiBoard {
       for (int j=0; j<8; j++) {
         boardString += toSmallAscii(board[i][j],i,j) + EDGE;
       }
-      boardString += "\n";
+      boardString += "\n\r";
     }
-    boardString += "\n    A  B  C  D  E  F  G  H\n";
+    boardString += "\n\r    A  B  C  D  E  F  G  H\n\r";
     return boardString;
   }
 
@@ -201,7 +238,7 @@ public class AsciiBoard {
         boardString += "\n\r";
       }
     }
-    boardString += "\n"+FILE;
+    boardString += "\n\r"+FILE;
     return boardString;
   }
 
